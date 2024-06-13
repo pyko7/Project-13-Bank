@@ -13,7 +13,7 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/user/:id",
+    path: "/profile",
     element: <UserPage />,
   },
 ]);

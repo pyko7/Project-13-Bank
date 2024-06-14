@@ -23,13 +23,16 @@ export const userSlice = createSlice({
         lastname: action.payload.lastname,
       };
     },
-    updateUserName: (state, action) => {
-      state.user = action.payload;
+    updateUserData: (state, action) => {
+      state.user = {
+        firstName: action.payload.firstName,
+        lastname: action.payload.lastname,
+      };
     },
   },
 });
 
-export const { setToken, removeToken, setUserData, updateUserName } =
+export const { setToken, removeToken, setUserData, updateUserData } =
   userSlice.actions;
 
 export default userSlice.reducer;

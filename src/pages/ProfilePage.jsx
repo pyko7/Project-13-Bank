@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { setUserData, updateUserData } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 
-const UserPage = () => {
+const ProfilePage = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
@@ -181,4 +181,4 @@ const UserPage = () => {
   );
 };
 
-export default UserPage;
+export default ProfilePage;

@@ -3,9 +3,9 @@ import Layout from "../components/Layout/Layout";
 import { useDispatch } from "react-redux";
 import { setToken } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { login } from "../utils/auth";
 
 const LoginPage = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
   const [formState, setFormState] = useState({
     username: "",
     password: "",
@@ -22,43 +22,20 @@ const LoginPage = () => {
     });
   };
 
-  const login = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     const formData = {
       email: formState.username,
       password: formState.password,
     };
-    const url = `${apiUrl}/user/login`;
-    const options = {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    };
+    const user = await login(formData);
+    const token = user?.body.token;
 
-    try {
-      const res = await fetch(url, options);
+    if (!token) return;
 
-      if (!res.ok) throw new Error(res.statusText);
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.log({ error });
-      return error;
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const user = await login();
-    // TODO: update error message
-    if (!user) throw new Error("No user");
-    const token = user.body.token;
-    if (token) {
-      dispatch(setToken(token));
-      navigate("/profile");
-    }
+    dispatch(setToken(token));
+    navigate("/profile");
   };
 
   return (

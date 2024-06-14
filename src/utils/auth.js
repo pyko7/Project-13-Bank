@@ -2,7 +2,7 @@ import { postFetch } from "../api/postFetch";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const login = async (data) => {
+export const login = (data) => {
   const url = `${apiUrl}/user/login`;
   const options = {
     method: "POST",

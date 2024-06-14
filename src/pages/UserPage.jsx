@@ -3,12 +3,14 @@ import AccountCard from "../components/AccountCard/AccountCard";
 import Layout from "../components/Layout/Layout";
 import { useCallback, useEffect, useState } from "react";
 import { setUserData, updateUserData } from "../features/user/userSlice";
+import { useNavigate } from "react-router-dom";
 
 const UserPage = () => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [fetchedData, setFetchedData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(null);
   const [formState, setFormState] = useState({
@@ -111,6 +113,12 @@ const UserPage = () => {
       })
     );
   };
+
+  useEffect(() => {
+    if (!token) {
+      navigate("/");
+    }
+  }, [token, navigate]);
 
   useEffect(() => {
     fetchData();

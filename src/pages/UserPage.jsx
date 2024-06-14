@@ -75,7 +75,6 @@ const UserPage = () => {
       if (!res.ok) throw new Error(res.statusText);
 
       const data = await res.json();
-      console.log({ data });
       return data;
     } catch (error) {
       console.log({ error });
@@ -89,7 +88,6 @@ const UserPage = () => {
 
   const handleInputChange = (e) => {
     const { id, value } = e.target;
-    console.log({ id, value });
     setFormState({
       ...formState,
       [id]: value,

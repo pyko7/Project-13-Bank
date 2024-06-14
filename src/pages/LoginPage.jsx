@@ -27,6 +27,7 @@ const LoginPage = () => {
       email: formState.username,
       password: formState.password,
     };
+    const url = `${apiUrl}/user/login`;
     const options = {
       method: "POST",
       headers: {
@@ -34,8 +35,9 @@ const LoginPage = () => {
       },
       body: JSON.stringify(formData),
     };
+
     try {
-      const res = await fetch(`${apiUrl}/user/login`, options);
+      const res = await fetch(url, options);
 
       if (!res.ok) throw new Error(res.statusText);
 

@@ -2,7 +2,7 @@ import { postFetch } from "../api/postFetch";
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
-export const fetchUserData = (token) => {
+export const fetchUserData = async (token) => {
   const url = `${apiUrl}/user/profile`;
   const options = {
     method: "POST",
@@ -11,11 +11,11 @@ export const fetchUserData = (token) => {
       "Content-Type": "application/json",
     },
   };
-  const user = postFetch(url, options);
+  const user = await postFetch(url, options);
   return user;
 };
 
-export const updateUser = (token, data) => {
+export const updateUser = async (token, data) => {
   const url = `${apiUrl}/user/profile`;
   const options = {
     method: "PUT",
@@ -25,6 +25,6 @@ export const updateUser = (token, data) => {
     },
     body: JSON.stringify(data),
   };
-  const user = postFetch(url, options);
+  const user = await postFetch(url, options);
   return user;
 };

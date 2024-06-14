@@ -14,8 +14,8 @@ const ProfilePage = () => {
   const [fetchedData, setFetchedData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(null);
   const [formState, setFormState] = useState({
-    firstName: "",
-    lastName: "",
+    firstName: user?.firstName,
+    lastName: user?.lastName,
   });
 
   const storeUserData = useCallback(() => {
@@ -26,7 +26,7 @@ const ProfilePage = () => {
         id: fetchedData.body.id,
         email: fetchedData.body.email,
         firstName: fetchedData.body.firstName,
-        lastname: fetchedData.body.lastname,
+        lastName: fetchedData.body.lastName,
       })
     );
   }, [dispatch, fetchedData]);
@@ -70,6 +70,7 @@ const ProfilePage = () => {
   }, [token, navigate]);
 
   useEffect(() => {
+    if (!token) return;
     const fetchData = async () => {
       const user = await fetchUserData(token);
       setFetchedData(user);
@@ -78,8 +79,9 @@ const ProfilePage = () => {
   }, [token]);
 
   useEffect(() => {
+    if (!token) return;
     storeUserData();
-  }, [storeUserData]);
+  }, [storeUserData, token]);
 
   return (
     <Layout>
@@ -88,7 +90,7 @@ const ProfilePage = () => {
           <h1>
             Welcome back
             <br />
-            {user?.firstName}
+            {user?.firstName + " " + user?.lastName}
           </h1>
           <button className="edit-button" onClick={handleEditMode}>
             Edit Name
@@ -98,13 +100,19 @@ const ProfilePage = () => {
           <form>
             <div className="input-wrapper">
               <label htmlFor="firstName">First name</label>
-              <input type="text" id="firstName" onChange={handleInputChange} />
+              <input
+                type="text"
+                defaultValue={user.firstName}
+                id="firstName"
+                onChange={handleInputChange}
+              />
             </div>
             <div className="input-wrapper">
               <label htmlFor="lastName">Last name</label>
               <input
-                type="password"
+                type="text"
                 id="lastName"
+                defaultValue={user.lastName}
                 onChange={handleInputChange}
               />
             </div>

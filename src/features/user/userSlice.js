@@ -20,13 +20,13 @@ export const userSlice = createSlice({
         id: action.payload.id,
         email: action.payload.email,
         firstName: action.payload.firstName,
-        lastname: action.payload.lastname,
+        lastName: action.payload.lastName,
       };
     },
     updateUserData: (state, action) => {
       state.user = {
         firstName: action.payload.firstName,
-        lastname: action.payload.lastname,
+        lastName: action.payload.lastName,
       };
     },
   },

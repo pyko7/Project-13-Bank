@@ -2,9 +2,10 @@ import { useDispatch, useSelector } from "react-redux";
 import AccountCard from "../components/AccountCard/AccountCard";
 import Layout from "../components/Layout/Layout";
 import { useCallback, useEffect, useState } from "react";
-import { setUserData, updateUserData } from "../features/user/userSlice";
+import { setUserData } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
-import { fetchUserData, updateUser } from "../utils/user";
+import { fetchUserData } from "../utils/user";
+import UpdateUserForm from "../components/UpdateUserForm/UpdateUserForm";
 
 const ProfilePage = () => {
   const token = useSelector((state) => state.user.token);
@@ -12,11 +13,7 @@ const ProfilePage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [fetchedData, setFetchedData] = useState(null);
-  const [isEditMode, setIsEditMode] = useState(null);
-  const [formState, setFormState] = useState({
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-  });
+  const [isEditMode, setIsEditMode] = useState(false);
 
   const storeUserData = useCallback(() => {
     if (!fetchedData) return;
@@ -33,34 +30,6 @@ const ProfilePage = () => {
 
   const handleEditMode = () => {
     setIsEditMode((prevIsEditMode) => !prevIsEditMode);
-  };
-
-  const handleInputChange = (e) => {
-    const { id, value } = e.target;
-    setFormState({
-      ...formState,
-      [id]: value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const formData = {
-      firstName: formState.firstName,
-      lastName: formState.lastName,
-    };
-    const user = await updateUser(token, formData);
-
-    const { firstName, lastName } = user.body;
-    if (!firstName || !lastName) return;
-
-    dispatch(
-      updateUserData({
-        firstName,
-        lastName,
-      })
-    );
-    setIsEditMode(false);
   };
 
   useEffect(() => {
@@ -87,40 +56,22 @@ const ProfilePage = () => {
     <Layout>
       <main className="main bg-dark">
         <div className="header">
-          <h1>
-            Welcome back
-            <br />
-            {user?.firstName + " " + user?.lastName}
-          </h1>
-          <button className="edit-button" onClick={handleEditMode}>
-            Edit Name
-          </button>
+          {isEditMode ? (
+            <h1>Welcome back</h1>
+          ) : (
+            <>
+              <h1>
+                Welcome back
+                <br />
+                {`${user?.firstName} ${user?.lastName}`}
+              </h1>
+              <button className="edit-button" onClick={handleEditMode}>
+                Edit Name
+              </button>
+            </>
+          )}
         </div>
-        {isEditMode && (
-          <form>
-            <div className="input-wrapper">
-              <label htmlFor="firstName">First name</label>
-              <input
-                type="text"
-                defaultValue={user.firstName}
-                id="firstName"
-                onChange={handleInputChange}
-              />
-            </div>
-            <div className="input-wrapper">
-              <label htmlFor="lastName">Last name</label>
-              <input
-                type="text"
-                id="lastName"
-                defaultValue={user.lastName}
-                onChange={handleInputChange}
-              />
-            </div>
-            <button className="sign-in-button" onClick={handleSubmit}>
-              Update
-            </button>
-          </form>
-        )}
+        {isEditMode && <UpdateUserForm setIsEditMode={setIsEditMode} />}
         <h2 className="sr-only">Accounts</h2>
         <AccountCard
           title="Argent Bank Checking (x8349)"

@@ -4,9 +4,9 @@ import Layout from "../components/Layout/Layout";
 import { useCallback, useEffect, useState } from "react";
 import { setUserData, updateUserData } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
+import { fetchUserData, updateUser } from "../utils/user";
 
 const ProfilePage = () => {
-  const apiUrl = import.meta.env.VITE_API_URL;
   const token = useSelector((state) => state.user.token);
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
@@ -18,31 +18,7 @@ const ProfilePage = () => {
     lastName: "",
   });
 
-  const fetchData = useCallback(async () => {
-    const url = `${apiUrl}/user/profile`;
-    const options = {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-    };
-
-    try {
-      const res = await fetch(url, options);
-
-      if (!res.ok) throw new Error(res.statusText);
-
-      const data = await res.json();
-      setFetchedData(data);
-      return data;
-    } catch (error) {
-      console.log({ error });
-      return error;
-    }
-  }, []);
-
-  const getUserData = useCallback(async () => {
+  const storeUserData = useCallback(() => {
     if (!fetchedData) return;
 
     dispatch(
@@ -54,35 +30,6 @@ const ProfilePage = () => {
       })
     );
   }, [dispatch, fetchedData]);
-
-  const updateUser = async () => {
-    const formData = {
-      firstName: formState.firstName,
-      lastName: formState.lastName,
-    };
-
-    const url = `${apiUrl}/user/profile`;
-    const options = {
-      method: "PUT",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-    };
-
-    try {
-      const res = await fetch(url, options);
-
-      if (!res.ok) throw new Error(res.statusText);
-
-      const data = await res.json();
-      return data;
-    } catch (error) {
-      console.log({ error });
-      return error;
-    }
-  };
 
   const handleEditMode = () => {
     setIsEditMode((prevIsEditMode) => !prevIsEditMode);
@@ -98,11 +45,12 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const formData = {
+      firstName: formState.firstName,
+      lastName: formState.lastName,
+    };
+    const user = await updateUser(token, formData);
 
-    const user = await updateUser();
-
-    // TODO: update error message
-    if (!user) throw new Error("No user");
     const { firstName, lastName } = user.body;
     if (!firstName || !lastName) return;
 
@@ -112,6 +60,7 @@ const ProfilePage = () => {
         lastName,
       })
     );
+    setIsEditMode(false);
   };
 
   useEffect(() => {
@@ -121,12 +70,16 @@ const ProfilePage = () => {
   }, [token, navigate]);
 
   useEffect(() => {
+    const fetchData = async () => {
+      const user = await fetchUserData(token);
+      setFetchedData(user);
+    };
     fetchData();
-  }, [fetchData]);
+  }, [token]);
 
   useEffect(() => {
-    getUserData();
-  }, [getUserData]);
+    storeUserData();
+  }, [storeUserData]);
 
   return (
     <Layout>

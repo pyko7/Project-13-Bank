@@ -1,17 +1,10 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import Logo from "../../assets/img/argentBankLogo.png";
-import { useDispatch, useSelector } from "react-redux";
-import { removeToken } from "../../features/user/userSlice";
+import { useSelector } from "react-redux";
+import UserMenu from "../UserMenu/UserMenu";
 
 const Header = () => {
   const isLoggedIn = useSelector((state) => state.user.token);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-
-  const handleLogout = () => {
-    dispatch(removeToken());
-    navigate("/");
-  };
 
   return (
     <nav className="main-nav">
@@ -30,10 +23,7 @@ const Header = () => {
             Sign In
           </Link>
         ) : (
-          <Link className="main-nav-item" onClick={handleLogout}>
-            <i className="fa fa-sign-out"></i>
-            Sign Out
-          </Link>
+          <UserMenu />
         )}
       </div>
     </nav>

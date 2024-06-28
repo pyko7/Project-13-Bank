@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 import AccountCard from "../components/AccountCard/AccountCard";
 import Layout from "../components/Layout/Layout";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { setUserData } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchUserData } from "../utils/user";
@@ -13,21 +13,7 @@ const ProfilePage = () => {
   const user = useSelector((state) => state.user.user);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [fetchedData, setFetchedData] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
-
-  const storeUserData = useCallback(() => {
-    if (!fetchedData) return;
-
-    dispatch(
-      setUserData({
-        id: fetchedData.body.id,
-        email: fetchedData.body.email,
-        firstName: fetchedData.body.firstName,
-        lastName: fetchedData.body.lastName,
-      })
-    );
-  }, [dispatch, fetchedData]);
 
   const handleEditMode = () => {
     setIsEditMode((prevIsEditMode) => !prevIsEditMode);
@@ -36,22 +22,21 @@ const ProfilePage = () => {
   useEffect(() => {
     if (!token) {
       navigate("/");
+      return;
     }
-  }, [token, navigate]);
 
-  useEffect(() => {
-    if (!token) return;
     const fetchData = async () => {
       const user = await fetchUserData(token);
-      setFetchedData(user);
+      const userData = {
+        id: user.body.id,
+        email: user.body.email,
+        firstName: user.body.firstName,
+        lastName: user.body.lastName,
+      };
+      dispatch(setUserData(userData));
     };
     fetchData();
-  }, [token]);
-
-  useEffect(() => {
-    if (!token) return;
-    storeUserData();
-  }, [storeUserData, token]);
+  }, [dispatch, navigate, token]);
 
   return (
     <Layout>

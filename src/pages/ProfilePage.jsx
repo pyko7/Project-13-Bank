@@ -6,6 +6,7 @@ import { setUserData } from "../features/user/userSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchUserData } from "../utils/user";
 import UpdateUserForm from "../components/UpdateUserForm/UpdateUserForm";
+import { accountCardMock } from "../utils/mock";
 
 const ProfilePage = () => {
   const token = useSelector((state) => state.user.token);
@@ -73,21 +74,14 @@ const ProfilePage = () => {
         </div>
         {isEditMode && <UpdateUserForm setIsEditMode={setIsEditMode} />}
         <h2 className="sr-only">Accounts</h2>
-        <AccountCard
-          title="Argent Bank Checking (x8349)"
-          amount="2,082.79"
-          description="Available Balance"
-        />
-        <AccountCard
-          title="Argent Bank Checking (x8349)"
-          amount="10,928.42"
-          description="Available Balance"
-        />
-        <AccountCard
-          title="Argent Bank Credit Card (x8349)"
-          amount="184.30"
-          description="Current Balance"
-        />
+        {accountCardMock.map((card) => (
+          <AccountCard
+            key={card.id}
+            title={card.title}
+            amount={card.amount}
+            description={card.description}
+          />
+        ))}
       </main>
     </Layout>
   );
